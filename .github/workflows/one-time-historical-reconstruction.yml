@@ -1,0 +1,68 @@
+# One-time, transparent historical contribution calendar reconstruction.
+# All marker commits are NEW, not restored original work.
+name: One-time history reconstruction
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-time-historical-reconstruction.yml'
+permissions:
+  contents: write
+concurrency:
+  group: one-time-history-reconstruction-main
+  cancel-in-progress: false
+jobs:
+  reconstruct:
+    if: github.event.head_commit.message == 'chore: install one-time contribution reconstruction workflow'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Add clearly identified retrospective markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'Cardioider'
+          git config user.email '228460677+Cardioider@users.noreply.github.com'
+          dates=(
+            2025-11-13
+            2025-11-20
+            2025-11-27
+            2025-12-03
+            2026-02-25
+            2026-03-07
+            2026-03-17
+            2026-03-27
+            2026-04-06
+            2026-04-16
+            2026-04-26
+            2026-05-06
+            2026-05-16
+            2026-05-26
+            2026-06-05
+            2026-06-15
+            2026-06-25
+            2026-07-04
+            2026-08-15
+            2026-08-24
+            2026-09-02
+            2026-09-11
+            2026-09-20
+            2026-09-29
+            2026-10-08
+            2026-10-17
+            2026-10-25
+          )
+          for day in "${dates[@]}"; do
+            message="archive: reconstructed calendar marker (${day})"
+            if git log --format=%s --all | grep -Fxq "${message}"; then
+              echo "Already present: ${day}"
+              continue
+            fi
+            GIT_AUTHOR_DATE="${day}T12:00:00+08:00" git commit --allow-empty \
+              -m "${message}" \
+              -m "Historical calendar reconstruction, created on 2026-10-30. This is not an original recovered commit. Original activity on this exact date is not verified."
+          done
+          git push origin HEAD:main
