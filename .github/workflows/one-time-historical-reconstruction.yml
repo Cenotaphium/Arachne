@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   reconstruct:
-    if: github.event.head_commit.message == 'chore: install one-time contribution reconstruction workflow'
+    if: "github.event.head_commit.message == 'fix(ci): enable one-time history reconstruction'"
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
